@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>Blade Runner Archetype Quiz</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <style>
 body {
@@ -191,6 +191,50 @@ body {
 }
 
 .confidence { color:#aaa; font-size:0.9em; margin-top:10px; }
+
+/* --- MOBILE OPTIMIZATION (MINIMAL MODE) --- */
+@media (max-width: 480px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .quiz-box {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  .question {
+    font-size: 1.05em;
+  }
+
+  .options button {
+    font-size: 0.95em;
+    padding: 12px;
+  }
+
+  .result-title {
+    font-size: 1.7em;
+  }
+
+  .result-card {
+    padding: 22px 18px;
+  }
+
+  .data-row {
+    font-size: 0.95em;
+  }
+
+  .restart-btn {
+    font-size: 1em;
+    padding: 12px 24px;
+  }
+}
+
 </style>
 </head>
 
