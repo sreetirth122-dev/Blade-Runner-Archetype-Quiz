@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Blade Runner Archetype Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-image: url("cyberpunkbg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eee;
+}
+
+.page-wrapper { width:100%; text-align:center; }
+
+.main-title {
+  font-size: 5em;
+  color: #ffffff;
+  margin-bottom: 25px;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 15px #bd00ff,
+    0 0 30px #00ffff,
+    0 0 60px #bd00ff;
+}
+
+.quiz-box {
+  max-width: 750px;
+  margin: auto;
+  background: linear-gradient(145deg, rgba(26,26,26,0.95), rgba(10,10,10,0.95));
+  padding: 40px 30px;
+  border-radius: 14px;
+  box-shadow:
+    0 0 25px rgba(0,255,255,0.4),
+    inset 0 0 25px rgba(255,79,216,0.15);
+  border: 1px solid rgba(0,255,255,0.5);
+  position: relative;
+}
+
+.quiz-box:before, .quiz-box:after {
+  content:"";
+  position:absolute;
+  width:40px; height:40px;
+  border:2px solid #00ffff;
+}
+.quiz-box:before { top:-2px; left:-2px; border-right:none; border-bottom:none; }
+.quiz-box:after { bottom:-2px; right:-2px; border-left:none; border-top:none; }
+
+.box-title {
+  font-size: 1.4em;
+  margin-bottom: 25px;
+  color: #ff4fd8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255,79,216,0.8);
+}
+
+.question { margin-bottom: 25px; font-size: 1.25em; }
+
+.options button, .category-btn, .start-btn {
+  display:block;
+  width:100%;
+  margin:12px 0;
+  padding:14px;
+  background: linear-gradient(90deg, #111, #222);
+  border:1px solid #00ffff;
+  color:#eee;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:1em;
+  transition: all 0.25s ease;
+}
+
+.options button:hover, .category-btn:hover, .start-btn:hover {
+  background: linear-gradient(90deg, #00ffff, #ff4fd8);
+  color:#000;
+  box-shadow: 0 0 15px rgba(0,255,255,0.9);
+  transform: scale(1.02);
+}
+
+.screen { display:none; }
+.screen.active { display:block; }
+
+.result-card {
+  border: 2px solid #00ffff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(5,5,10,0.95), rgba(20,20,30,0.95));
+  box-shadow:
+    0 0 25px rgba(0,255,255,0.6),
+    inset 0 0 20px rgba(255,79,216,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+}
+
+.result-title {
+  font-size: 2.3em;
+  color: #00ffff;
+  margin-bottom: 10px;
+  text-shadow:
+    0 0 10px #00ffff,
+    0 0 25px rgba(0,255,255,0.8);
+}
+
+.result-subtitle {
+  color: #ff4fd8;
+  margin-bottom: 25px;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.data-row {
+  margin: 12px 0;
+  padding: 10px;
+  border-left: 3px solid #ff4fd8;
+  background: rgba(255,255,255,0.03);
+  text-align: left;
+}
+
+.data-label {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.data-value {
+  color: #eee;
+}
+
+.confidence-meter {
+  margin-top: 25px;
+  text-align: left;
+}
+
+.meter-bar {
+  height: 14px;
+  width: 100%;
+  background: #111;
+  border: 1px solid #00ffff;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4fd8, #00ffff);
+  box-shadow: 0 0 12px rgba(0,255,255,0.9);
+}
+
+.prophecy {
+  margin-top: 25px;
+  font-style: italic;
+  color: #aaa;
+  text-shadow: 0 0 6px rgba(255,255,255,0.3);
+}
+
+.restart-btn {
+  margin-top: 30px;
+  padding: 14px 30px;
+  background: linear-gradient(90deg, #00ffff, #ff4fd8);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0,255,255,0.8);
+}
+
+.confidence { color:#aaa; font-size:0.9em; margin-top:10px; }
+</style>
+</head>
+
+<body>
+<div class="page-wrapper">
+<div class="main-title">What’s Your Archetype?</div>
+
+<div class="quiz-box">
+
+<!-- START -->
+<div id="start-screen" class="screen active">
+  <div class="box-title">Enter the Nexus</div>
+  <p>Discover your place in the Blade Runner universe.</p><br>
+  <button class="start-btn" onclick="showCategory()">Begin Analysis</button>
+</div>
+
+<!-- CATEGORY -->
+<div id="category-screen" class="screen">
+  <div class="box-title">Choose Your Path</div>
+  <button class="category-btn" onclick="selectCategory('seekers')">The Seekers</button>
+  <button class="category-btn" onclick="selectCategory('makers')">The Makers & Masters</button>
+  <button class="category-btn" onclick="selectCategory('rebels')">The Rebels</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-screen" class="screen">
+  <div class="box-title" id="subcategory-title"></div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result-screen" class="screen result"></div>
+
+</div>
+</div>
+
+<script>
+
+/* --- PATH → ARCHETYPES --- */
+const paths = {
+  seekers: ["Manufactured Being Seeking Humanity","Hidden Chosen One","Lost Child","Memory Architect","Artificial Companion"],
+  makers: ["Creator-God","Tyrannical Visionary","Corporate Enforcer","Femme Fatale Enforcer","Broken Lawman"],
+  rebels: ["Fallen Angel","Prophet of a New World","Underground Resistance","Disillusioned Hunter","Mother of a New Species"]
+};
+
+/* --- FULL ARCHETYPE PROFILES --- */
+const archetypeResults = {
+  "Manufactured Being Seeking Humanity": { title:"The Manufactured Being Seeking Humanity", traits:"Sensitive • Curious • Emotion-driven", strengths:"Empathy, emotional intelligence", shadow:"Identity confusion", parallel:"Roy Batty / Rachael", theme:"Becoming real through emotion" },
+  "Hidden Chosen One": { title:"The Hidden Chosen One", traits:"Introspective • Sacrificial", strengths:"Moral clarity", shadow:"Self-doubt", parallel:"K", theme:"Meaning over origin" },
+  "Lost Child": { title:"The Lost Child", traits:"Vulnerable • Gentle", strengths:"Resilience", shadow:"Loneliness", parallel:"Replicant Child", theme:"Searching for belonging" },
+  "Memory Architect": { title:"The Memory Architect", traits:"Creative • Reflective", strengths:"Imagination", shadow:"Isolation", parallel:"Ana Stelline", theme:"Identity through memory" },
+  "Artificial Companion": { title:"The Artificial Companion", traits:"Devoted • Loving", strengths:"Emotional attunement", shadow:"Dependency", parallel:"Joi", theme:"Love without agency" },
+
+  "Creator-God": { title:"The Creator-God", traits:"Visionary • Grandiose", strengths:"Innovation", shadow:"Hubris", parallel:"Tyrell / Wallace", theme:"Playing god" },
+  "Tyrannical Visionary": { title:"The Tyrannical Visionary", traits:"Fanatical • Dominant", strengths:"Leadership", shadow:"Cruelty", parallel:"Wallace", theme:"Progress without mercy" },
+  "Corporate Enforcer": { title:"The Corporate Enforcer", traits:"Loyal • Controlled", strengths:"Discipline", shadow:"Moral blindness", parallel:"Luv", theme:"Obedience over humanity" },
+  "Femme Fatale Enforcer": { title:"The Femme Fatale Enforcer", traits:"Seductive • Deadly", strengths:"Precision", shadow:"Manipulation", parallel:"Zhora / Luv", theme:"Weaponized charm" },
+  "Broken Lawman": { title:"The Broken Lawman", traits:"World-weary • Cynical", strengths:"Authority", shadow:"Burnout", parallel:"Joshi", theme:"Order at a cost" },
+
+  "Fallen Angel": { title:"The Fallen Angel", traits:"Charismatic • Tragic", strengths:"Moral depth", shadow:"Despair", parallel:"Roy Batty", theme:"Grace in rebellion" },
+  "Prophet of a New World": { title:"The Prophet of a New World", traits:"Visionary • Idealistic", strengths:"Inspiration", shadow:"Fanaticism", parallel:"Freysa", theme:"Birthing a future" },
+  "Underground Resistance": { title:"The Underground Resistance", traits:"Collective • Fierce", strengths:"Unity", shadow:"Extremism", parallel:"Replicant Movement", theme:"Freedom through rebellion" },
+  "Disillusioned Hunter": { title:"The Disillusioned Hunter", traits:"Stoic • Conflicted", strengths:"Endurance", shadow:"Numbness", parallel:"Deckard", theme:"Humanity through duty" },
+  "Mother of a New Species": { title:"The Mother of a New Species", traits:"Protective • Sacrificial", strengths:"Love", shadow:"Grief", parallel:"Rachael", theme:"Evolution through life" }
+};
+
+const questions = {
+    seekers: [
+    {q:"What troubles you most at night?", o:["Whether your feelings are real","Why your life feels destined","Why you were left behind","How memories define you","Whether your love is returned"], map:[0,1,2,3,4]},
+    {q:"Your strongest desire is to…", o:["Become human","Discover your purpose","Belong somewhere","Understand the past","Be emotionally needed"], map:[0,1,2,3,4]},
+    {q:"People often see you as…", o:["Unusual","Quiet but important","Innocent","Creative","Caring"], map:[0,1,2,3,4]},
+    {q:"Your biggest fear is…", o:["Being artificial","Failing destiny","Being forgotten","Losing memories","Being abandoned"], map:[0,1,2,3,4]},
+    {q:"In relationships, you are…", o:["Curious","Protective","Dependent","Reflective","Devoted"], map:[0,1,2,3,4]},
+    {q:"Your identity comes from…", o:["Feelings","Destiny","Bonds","Memory","Attachment"], map:[0,1,2,3,4]},
+    {q:"Your past feels…", o:["Manufactured","Mysterious","Lonely","Fragmented","About others"], map:[0,1,2,3,4]},
+    {q:"When hurt, you…", o:["Question reality","Withdraw","Fear","Retreat to memory","Seek reassurance"], map:[0,1,2,3,4]},
+    {q:"You feel strongest when…", o:["Feeling emotion","Accepting role","Finding safety","Creating memories","Being needed"], map:[0,1,2,3,4]},
+    {q:"Your inner voice says…", o:["Am I real?","Why chosen?","Why left?","What does this mean?","Do they love me?"], map:[0,1,2,3,4]},
+    {q:"Your greatest strength is…", o:["Sensitivity","Moral clarity","Resilience","Imagination","Loyalty"], map:[0,1,2,3,4]},
+    {q:"Your weakness is…", o:["Identity confusion","Self doubt","Fear of abandonment","Isolation","Dependency"], map:[0,1,2,3,4]},
+    {q:"Fulfillment comes from…", o:["Authenticity","Destiny","Acceptance","Meaning","Love"], map:[0,1,2,3,4]},
+    {q:"Your life theme is…", o:["Becoming real","Becoming chosen","Becoming safe","Becoming whole","Becoming connected"], map:[0,1,2,3,4]},
+    {q:"Your story ends with…", o:["Humanity","Revelation","Belonging","Understanding","Emotional freedom"], map:[0,1,2,3,4]}
+    ],
+
+    makers: [
+    {q:"Power to you means…", o:["Creation","Transformation","Obedience","Influence","Order"], map:[0,1,2,3,4]},
+    {q:"Your leadership style is…", o:["Intellectual","Ideological","Loyal","Strategic","Disciplinary"], map:[0,1,2,3,4]},
+    {q:"Your moral flaw is…", o:["Hubris","Fanaticism","Blind loyalty","Manipulation","Cynicism"], map:[0,1,2,3,4]},
+    {q:"Society needs more…", o:["Innovation","Vision","Enforcers","Control","Law"], map:[0,1,2,3,4]},
+    {q:"People follow you because…", o:["Brilliance","Inspiration","Reliability","Danger","Authority"], map:[0,1,2,3,4]},
+    {q:"When disobeyed, you…", o:["Redesign","Punish","Eliminate","Manipulate","Enforce"], map:[0,1,2,3,4]},
+    {q:"Your fear is…", o:["Losing legacy","Losing control","Losing orders","Losing influence","Losing authority"], map:[0,1,2,3,4]},
+    {q:"Cruelty is justified because…", o:["Progress","Destiny","Orders","Strategy","Law"], map:[0,1,2,3,4]},
+    {q:"Your reputation is…", o:["Genius","Tyrant","Enforcer","Seductive threat","Hard authority"], map:[0,1,2,3,4]},
+    {q:"You feel alive when…", o:["Creating life","Commanding","Executing","Outsmarting","Judging"], map:[0,1,2,3,4]},
+    {q:"Your downfall is…", o:["Arrogance","Obsession","Obedience","Manipulation","Rigidity"], map:[0,1,2,3,4]},
+    {q:"You value most…", o:["Legacy","Destiny","Loyalty","Influence","Stability"], map:[0,1,2,3,4]},
+    {q:"Your conflict is…", o:["Godhood vs humility","Vision vs mercy","Duty vs conscience","Power vs emotion","Law vs justice"], map:[0,1,2,3,4]},
+    {q:"Your strength is…", o:["Intelligence","Charisma","Discipline","Precision","Endurance"], map:[0,1,2,3,4]},
+    {q:"Your life theme is…", o:["Playing god","Remaking world","Serving power","Weaponized charm","Preserving order"], map:[0,1,2,3,4]}
+    ],
+
+    rebels: [
+    {q:"Your life feels like…", o:["Tragedy","Prophecy","Revolution","Mission","Sacrifice"], map:[0,1,2,3,4]},
+    {q:"Your driving force is…", o:["Redemption","Vision","Freedom","Duty","Protection"], map:[0,1,2,3,4]},
+    {q:"People see you as…", o:["Dangerous","Inspiring","Defiant","Relentless","Nurturing"], map:[0,1,2,3,4]},
+    {q:"Your strength is…", o:["Moral depth","Leadership","Unity","Endurance","Love"], map:[0,1,2,3,4]},
+    {q:"Your fear is…", o:["Damnation","Failure of destiny","Defeat of cause","Losing purpose","Losing child"], map:[0,1,2,3,4]},
+    {q:"You fight for…", o:["Forgiveness","Future","Liberation","Survival","Next generation"], map:[0,1,2,3,4]},
+    {q:"Your anger comes from…", o:["Betrayal","Injustice","Oppression","Corruption","Fear"], map:[0,1,2,3,4]},
+    {q:"Your fate feels…", o:["Tragic","Legendary","Collective","Endless","Transformative"], map:[0,1,2,3,4]},
+    {q:"You would sacrifice…", o:["Yourself","Present","Comfort","Innocence","Everything"], map:[0,1,2,3,4]},
+    {q:"Your symbol is…", o:["Broken wings","Banner","Raised fist","Blade","Cradle"], map:[0,1,2,3,4]},
+    {q:"Your greatest loss…", o:["Soul","Vision","People","Mission","Child"], map:[0,1,2,3,4]},
+    {q:"Leadership style…", o:["Tragic example","Prophetic guide","Collective voice","Lone warrior","Protective parent"], map:[0,1,2,3,4]},
+    {q:"Your legacy…", o:["Redemption","Revolution","Liberation","Survival","Evolution"], map:[0,1,2,3,4]},
+    {q:"Future needs…", o:["Forgiveness","Direction","Unity","Strength","New life"], map:[0,1,2,3,4]},
+    {q:"Your story ends with…", o:["Grace","New era","Freedom","Peace","New species"], map:[0,1,2,3,4]}
+    ]
+    };
+
+let selectedPath = null;
+let current = 0;
+let scores = [0,0,0,0,0];
+
+function showCategory(){
+  document.getElementById("start-screen").classList.remove("active");
+  document.getElementById("category-screen").classList.add("active");
+}
+
+function selectCategory(path){
+  selectedPath = path;
+  current = 0;
+  scores = [0,0,0,0,0];
+
+  document.getElementById("category-screen").classList.remove("active");
+  document.getElementById("quiz-screen").classList.add("active");
+
+  document.getElementById("subcategory-title").innerText =
+    path === "seekers" ? "The Seekers" :
+    path === "makers" ? "The Makers & Masters" :
+    "The Rebels";
+
+  showQuestion();
+}
+
+function showQuestion(){
+  const q = questions[selectedPath][current];
+  document.getElementById("question").innerText = q.q;
+  const options = document.getElementById("options");
+  options.innerHTML = "";
+
+  q.o.forEach((opt,i)=>{
+    const btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = ()=>answer(q.map[i]);
+    options.appendChild(btn);
+  });
+}
+
+function answer(choice){
+  scores[choice] += 2;
+  current++;
+
+  if(current < questions[selectedPath].length) showQuestion();
+  else showResult();
+}
+
+function showResult(){
+  document.getElementById("quiz-screen").classList.remove("active");
+  const result = document.getElementById("result-screen");
+  result.classList.add("active");
+
+  const maxIndex = scores.indexOf(Math.max(...scores));
+  const archetype = paths[selectedPath][maxIndex];
+  const data = archetypeResults[archetype];
+
+  const sorted = [...scores].sort((a,b)=>b-a);
+  const confidenceScore = sorted[0] - sorted[1];
+
+  let confidence = "Low";
+  let meterPercent = 40;
+
+  if(confidenceScore >= 6){
+    confidence = "High";
+    meterPercent = 95;
+  } else if(confidenceScore >= 3){
+    confidence = "Medium";
+    meterPercent = 70;
+  }
+
+  const confidenceText =
+    confidence === "High" ? "Identity lock achieved. Archetype pattern is stable."
+    : confidence === "Medium" ? "Primary archetype detected with secondary influence."
+    : "Multiple archetype signals detected. Hybrid personality profile formed.";
+
+  result.innerHTML = `
+    <div class="result-card">
+
+      <div class="result-title">${data.title}</div>
+      <div class="result-subtitle">Archetype Identity Scan Complete</div>
+
+      <div class="data-row">
+        <span class="data-label">Core Traits:</span><br>
+        <span class="data-value">${data.traits}</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">Strengths:</span><br>
+        <span class="data-value">${data.strengths}</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">Shadow Side:</span><br>
+        <span class="data-value">${data.shadow}</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">Blade Runner Parallel:</span><br>
+        <span class="data-value">${data.parallel}</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">Life Path Theme:</span><br>
+        <span class="data-value">${data.theme}</span>
+      </div>
+
+      <div class="confidence-meter">
+        <span class="data-label">Identity Stability: ${confidence}</span>
+        <div class="meter-bar">
+          <div class="meter-fill" style="width:${meterPercent}%"></div>
+        </div>
+        <div class="confidence">${confidenceText}</div>
+      </div>
+
+      <div class="prophecy">
+        "In this city of artificial souls, your identity is not programmed — it is chosen."
+      </div>
+
+      <button class="restart-btn" onclick="location.reload()">Restart Analysis</button>
+
+    </div>
+  `;
+}
+
+</script>
+</body>
+</html>
