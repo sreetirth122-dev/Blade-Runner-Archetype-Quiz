@@ -153,6 +153,10 @@ For best visual experience:
 
 ## **Screenshots**
 
+<img width="1918" height="873" alt="Screenshot 2026-05-16 163748" src="https://github.com/user-attachments/assets/bdab1bd6-082f-41d0-9ac9-f0fb7014e464" />
+<img width="1918" height="877" alt="Screenshot 2026-05-16 163811" src="https://github.com/user-attachments/assets/42ce0684-5ce6-470d-b11c-f074993522c9" />
+<img width="1901" height="876" alt="Screenshot 2026-05-16 164040" src="https://github.com/user-attachments/assets/8574818b-010d-4611-b136-ef83e381da95" />
+
 
 ## **License**
 
