@@ -1,4 +1,4 @@
-**Blade Runner Archetype Quiz**
+# **Blade Runner Archetype Quiz**
 
 A cyberpunk-inspired interactive personality quiz based on the archetypes, themes, and philosophical ideas explored in the Blade Runner universe.  
 This project combines:  
@@ -10,7 +10,7 @@ This project combines:
 The quiz assigns users to a unique Blade Runner archetype and corresponding faction alignment based on their responses.
 
 
-**Features**
+## **Features**
 
 * Interactive Personality Quiz
 * 20-question personality system
@@ -23,7 +23,7 @@ Blade Runner (1982)
 Blade Runner 2049 (2017)  
 
 
-**Faction System**
+## **Faction System**
 
 The archetypes are divided into three major thematic factions inspired by the core philosophical conflicts of the Blade Runner universe.  
 
@@ -63,7 +63,7 @@ Archetypes:
 * Mother of a New Species
 
 
-**Cyberpunk UI Design**
+## **Cyberpunk UI Design**
 
 The interface is designed to reflect the aesthetic and atmosphere of Blade Runner through:
 * Neon cyberpunk color palette
@@ -84,7 +84,7 @@ At the end of the quiz, users receive:
 * Confidence Meter
 
 
-**Technologies Used**
+## **Technologies Used**
 
 * HTML5
 * CSS3
@@ -92,7 +92,7 @@ At the end of the quiz, users receive:
 No frameworks or external libraries were used.
 
 
-**Project Structure**
+## **Project Structure**
 
 BladeRunnerArchetypeQuiz/  
 │  
@@ -101,7 +101,8 @@ BladeRunnerArchetypeQuiz/
 └── README.md  
 
 
-How the Quiz Works
+## **How the Quiz Works**
+
 * The user answers personality-based questions.
 * Each answer contributes points toward specific archetypes.
 * Scores are calculated dynamically.
@@ -122,7 +123,7 @@ The project draws inspiration from major Blade Runner characters such as:
 These characters were transformed into broader symbolic archetypes representing identity, morality, rebellion, creation, and emotional authenticity.
 
 
-**Design Goals**
+## **Design Goals**
 
 The main goals of the project were:  
 * To explore Blade Runner philosophically
@@ -131,7 +132,7 @@ The main goals of the project were:
 * To experiment with archetype-based personality systems
 
 
-**Future Improvements**
+## **Future Improvements**
 
 Planned additions include:  
 * Animated terminal scan effects
@@ -143,24 +144,24 @@ Planned additions include:
 * Save/share result system
 
 
-**Running the Project**
+## **Running the Project**
 
 Simply open the index.html file in a browser.  
 For best visual experience:  
 * Use desktop/fullscreen mode
 * Enable hardware acceleration in browser settings
 
-**Screenshots**
+## **Screenshots**
 
 
-**License**
+## **License**
 
 This project is a non-commercial fan-inspired interactive experience based on the themes and aesthetics of the Blade Runner franchise.  
 
 Blade Runner and its associated properties belong to their respective copyright holders.  
 
 
-**Author**
+## **Author**
 
 Created as an experimental narrative + interactive design project exploring:  
 * Cyberpunk aesthetics
