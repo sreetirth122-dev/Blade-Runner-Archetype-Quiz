@@ -60,6 +60,7 @@ text-shadow:
 background:linear-gradient(145deg,rgba(26,26,26,0.95),rgba(10,10,10,0.95));
 padding:40px 30px;
 border-radius:14px;
+width:95%;
 box-shadow:
 0 0 25px rgba(0,255,255,0.4),
 inset 0 0 25px rgba(255,79,216,0.15);
@@ -189,6 +190,13 @@ font-size:1.1em;
 cursor:pointer;
 }
 
+.prophecy{
+margin-top:25px;
+font-style:italic;
+color:#aaa;
+line-height:1.6;
+}
+
 </style>
 </head>
 
@@ -231,6 +239,36 @@ which archetype defines you?
 
 /* ARCHETYPES */
 
+const userTraits = {
+  empathy: 0,
+  emotionality: 0,
+  isolation: 0,
+  idealism: 0,
+  rebellion: 0,
+  dominance: 0,
+  ambition: 0,
+  obedience: 0,
+  morality: 0,
+  vulnerability:0,
+  individuality:0,
+  curiosity: 0,
+  identitySeeking: 0,
+  protectiveness: 0,
+  sacrifice: 0,
+  existentialism: 0,
+  manipulation: 0,
+  creativity: 0,
+  nostalgia: 0,
+  adaptability: 0,
+  resilience: 0,
+  control: 0,
+  attachment: 0,
+  visionaryThinking: 0,
+  emotionalSuppression: 0,
+  justice: 0,
+  survivalism: 0 
+};
+
 const archetypes=[
 "Disillusioned Hunter","Manufactured Being Seeking Humanity","Creator-God","Fallen Angel","Prophet of a New World",
 "Hidden Chosen One","Mother of a New Species","Archivist of Truth","Corporate Enforcer","Broken Lawman",
@@ -238,9 +276,176 @@ const archetypes=[
 "Last Relic of the Past","Test Subject","Tyrannical Visionary","Lost Child","Ethical Scientist"
 ]
 
+const archetypeProfiles = {
+  "Manufactured Being Seeking Humanity": {
+    empathy: 9,
+    emotionality: 9,
+    identitySeeking: 10,
+    existentialism: 8,
+    attachment: 7,
+    isolation: 5,
+    curiosity: 7,
+    morality: 6
+  },
+  "Hidden Chosen One": {
+    morality: 9,
+    sacrifice: 8,
+    isolation: 7,
+    identitySeeking: 9,
+    emotionalSuppression: 5,
+    idealism: 7,
+    resilience: 8
+  },
+  "Lost Child": {
+    attachment: 9,
+    isolation: 9,
+    emotionality: 8,
+    vulnerability: 10,
+    empathy: 7,
+    resilience: 6
+  },
+  "Memory Architect": {
+    creativity: 10,
+    nostalgia: 9,
+    existentialism: 8,
+    isolation: 8,
+    emotionality: 7,
+    curiosity: 7
+  },
+  "Artificial Companion": {
+    attachment: 10,
+    empathy: 8,
+    emotionality: 8,
+    obedience: 6,
+    identitySeeking: 5,
+    sacrifice: 6
+  },
+  "Creator-God": {
+    dominance: 9,
+    visionaryThinking: 10,
+    ambition: 9,
+    control: 10,
+    empathy: 2,
+    morality: 3,
+    emotionalSuppression: 8
+  },
+  "Tyrannical Visionary": {
+    dominance: 10,
+    ambition: 10,
+    visionaryThinking: 9,
+    control: 9,
+    manipulation: 7,
+    empathy: 1,
+    morality: 2
+  },
+  "Corporate Enforcer": {
+    obedience: 10,
+    emotionalSuppression: 8,
+    control: 8,
+    morality: 4,
+    resilience: 8,
+    dominance: 6
+  },
+  "Femme Fatale Enforcer": {
+    manipulation: 10,
+    dominance: 7,
+    emotionality: 5,
+    adaptability: 9,
+    control: 7,
+    ambition: 6
+  },
+  "Broken Lawman": {
+    justice: 8,
+    emotionalSuppression: 7,
+    isolation: 6,
+    morality: 7,
+    resilience: 9,
+    control: 6
+  },
+  "Fallen Angel": {
+    rebellion: 10,
+    existentialism: 10,
+    emotionality: 9,
+    idealism: 8,
+    sacrifice: 8,
+    empathy: 7
+  },
+  "Prophet of a New World": {
+    visionaryThinking: 10,
+    idealism: 10,
+    rebellion: 7,
+    dominance: 6,
+    sacrifice: 7,
+    morality: 8
+  },
+  "Underground Resistance": {
+    rebellion: 10,
+    justice: 8,
+    idealism: 8,
+    sacrifice: 6,
+    empathy: 6,
+    resilience: 7
+  },
+  "Disillusioned Hunter": {
+    emotionalSuppression: 9,
+    survivalism: 9,
+    resilience: 10,
+    isolation: 7,
+    morality: 6,
+    justice: 5
+  },
+  "Mother of a New Species": {
+    protectiveness: 10,
+    sacrifice: 10,
+    empathy: 10,
+    attachment: 8,
+    emotionality: 8,
+    morality: 8
+  },
+  "Archivist of Truth": {
+    curiosity: 8,
+    morality: 8,
+    isolation: 7,
+    nostalgia: 8,
+    emotionalSuppression: 5,
+    existentialism: 6
+  },
+  "Mentor in Exile": {
+    isolation: 9,
+    nostalgia: 8,
+    morality: 7,
+    emotionalSuppression: 8,
+    resilience: 7,
+    existentialism: 7
+  },
+  "Last Relic of the Past": {
+    nostalgia: 10,
+    isolation: 8,
+    existentialism: 7,
+    emotionalSuppression: 7,
+    resilience: 6
+  },
+  "Test Subject": {
+    obedience: 9,
+    emotionalSuppression: 9,
+    control: 7,
+    survivalism: 7,
+    identitySeeking: 5,
+    resilience: 6
+  },
+  "Ethical Scientist": {
+    curiosity: 9,
+    morality: 10,
+    empathy: 7,
+    creativity: 6,
+    visionaryThinking: 7,
+    existentialism: 6
+  }
+};
+
 /* FACTIONS */
 
-const paths={
+const factions={
 Seekers:[
 "Manufactured Being Seeking Humanity",
 "Hidden Chosen One",
@@ -454,31 +659,715 @@ theme:"Creation with conscience"
 
 /* QUESTIONS */
 
-const questions=[
-{q:'You feel most alive when…',o:['Solving moral dilemmas','Creating something meaningful','Taking control','Protecting someone'],map:[19,14,17,6]},
-{q:'People rely on you for…',o:['Empathy','Strategy','Reliability','Authority'],map:[1,2,0,9]},
-{q:'Your biggest fear…',o:['Being insignificant','Losing control','Hurting others','Being alone'],map:[18,2,19,6]},
-{q:'Chaos makes you…',o:['Enforce order','Search for meaning','Adapt quietly','Act boldly'],map:[9,7,16,3]},
-{q:'You value most…',o:['Truth','Power','Connection','Freedom'],map:[7,17,12,13]},
-{q:'Your ideal role…',o:['Explorer','Commander','Creator','Protector'],map:[5,2,14,6]},
-{q:'Deep down you feel…',o:['Destined for something','Just a tool','Responsible for others','Guardian of truth'],map:[5,16,0,7]},
-{q:'Your emotions are…',o:['Suppressed','Explosive','Gentle','Controlled'],map:[16,3,6,8]},
-{q:'In a group you are…',o:['Leader','Strategist','Supporter','Outsider'],map:[17,2,11,10]},
-{q:'Your greatest temptation…',o:['Power','Escape','Revenge','Recognition'],map:[17,10,3,2]},
-{q:'You break rules when…',o:['Someone must be saved','Progress demands it','Truth must survive','It benefits you'],map:[6,2,7,8]},
-{q:'Your inner voice says…',o:['Who am I?','Everything has purpose','Do your duty','Stay silent'],map:[1,4,9,7]},
-{q:'You care more about…',o:['Legacy','Justice','Love','Order'],map:[2,19,11,9]},
-{q:'Safety means…',o:['Control','Solitude','Trust','Predictability'],map:[17,10,6,16]},
-{q:'You relate to…',o:['Revolutionaries','Lost children','God creators','Tired protectors'],map:[12,18,2,0]},
-{q:'Your secret wish…',o:['Change the world','Be loved','Be remembered','Disappear'],map:[4,11,2,10]},
-{q:'Stories about…',o:['Lost children','Fallen angels','Mad gods','Silent heroes'],map:[18,3,2,0]},
-{q:'Love is…',o:['A glitch','Sacred','A tool','A distraction'],map:[11,6,8,10]},
-{q:'You feel like…',o:['A weapon','A parent','A prophet','A ghost'],map:[13,6,4,15]},
-{q:'Which line feels right?',o:['I want to be real','I did my duty','I will remake the world','I protected truth'],map:[1,0,17,7]}
-]
+const questions = [
 
-const scores={}
-archetypes.forEach(a=>scores[a]=0)
+/*QUESTION 1*/
+{
+  q: "When someone repeatedly disappoints you, you usually…",
+  options: [
+    {
+      text: "Distance yourself completely",
+      effects: {
+        isolation: 2,
+        emotionalSuppression: 1,
+        attachment: -1
+      }
+    },
+    {
+      text: "Try to understand why they acted that way",
+      effects: {
+        empathy: 2,
+        morality: 1
+      }
+    },
+    {
+      text: "Confront them directly",
+      effects: {
+        dominance: 2,
+        rebellion: 1
+      }
+    },
+    {
+      text: "Keep enduring it quietly",
+      effects: {
+        sacrifice: 2,
+        emotionalSuppression: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 2*/
+{
+  q: "You discover a dangerous truth that could destabilize society. You…",
+  options: [
+    {
+      text: "Reveal it immediately",
+      effects: {
+        justice: 2,
+        rebellion: 1,
+        obedience: -1
+      }
+    },
+    {
+      text: "Hide it to preserve stability",
+      effects: {
+        control: 2,
+        obedience: 1
+      }
+    },
+    {
+      text: "Share it only with trusted people",
+      effects: {
+        attachment: 1,
+        morality: 1,
+        adaptability: 1
+      }
+    },
+    {
+      text: "Use it strategically for leverage",
+      effects: {
+        manipulation: 2,
+        ambition: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 3*/
+{
+  q: "When emotionally overwhelmed, you tend to…",
+  options: [
+    {
+      text: "Withdraw from everyone",
+      effects: {
+        isolation: 2,
+        emotionalSuppression: 1
+      }
+    },
+    {
+      text: "Seek comfort from someone close",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Channel it into work or goals",
+      effects: {
+        ambition: 2,
+        control: 1
+      }
+    },
+    {
+      text: "Explode emotionally",
+      effects: {
+        emotionality: 2,
+        rebellion: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 4*/
+{
+  q: "What matters more to you?",
+  options: [
+    {
+      text: "Freedom",
+      effects: {
+        rebellion: 2,
+        individuality: 1
+      }
+    },
+    {
+      text: "Connection",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Power",
+      effects: {
+        ambition: 2,
+        dominance: 1
+      }
+    },
+    {
+      text: "Truth",
+      effects: {
+        morality: 2,
+        curiosity: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 5*/
+{
+  q: "People usually see you as…",
+  options: [
+    {
+      text: "Calm but distant",
+      effects: {
+        isolation: 2,
+        emotionalSuppression: 1
+      }
+    },
+    {
+      text: "Warm and emotionally aware",
+      effects: {
+        empathy: 2,
+        attachment: 1
+      }
+    },
+    {
+      text: "Driven and intense",
+      effects: {
+        ambition: 2,
+        dominance: 1
+      }
+    },
+    {
+      text: "Mysterious and difficult to read",
+      effects: {
+        existentialism: 1,
+        isolation: 1,
+        adaptability: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 6*/
+{
+  q: "If you were given absolute authority, you would…",
+  options: [
+    {
+      text: "Create a better system",
+      effects: {
+        visionaryThinking: 2,
+        control: 1
+      }
+    },
+    {
+      text: "Protect vulnerable people",
+      effects: {
+        protectiveness: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Reshape society completely",
+      effects: {
+        ambition: 2,
+        rebellion: 1,
+        dominance: 1
+      }
+    },
+    {
+      text: "Avoid taking that responsibility",
+      effects: {
+        isolation: 1,
+        emotionality: 1,
+        dominance: -1
+      }
+    }
+  ]
+},
+
+/*QUESTION 7*/
+{
+  q: "Which fear feels closest to you?",
+  options: [
+    {
+      text: "Losing yourself",
+      effects: {
+        identitySeeking: 2,
+        existentialism: 1
+      }
+    },
+    {
+      text: "Being powerless",
+      effects: {
+        control: 2,
+        dominance: 1
+      }
+    },
+    {
+      text: "Being abandoned",
+      effects: {
+        attachment: 2,
+        emotionality: 1
+      }
+    },
+    {
+      text: "Being meaningless",
+      effects: {
+        existentialism: 2,
+        isolation: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 8*/
+{
+  q: "In conflict, you usually…",
+  options: [
+    {
+      text: "Stay emotionally controlled",
+      effects: {
+        control: 2,
+        emotionalSuppression: 1
+      }
+    },
+    {
+      text: "Try to mediate peacefully",
+      effects: {
+        empathy: 2,
+        morality: 1
+      }
+    },
+    {
+      text: "Fight aggressively",
+      effects: {
+        dominance: 2,
+        rebellion: 1
+      }
+    },
+    {
+      text: "Disappear until it passes",
+      effects: {
+        isolation: 2,
+        adaptability: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 9*/
+{
+  q: "What gives your life meaning?",
+  options: [
+    {
+      text: "Relationships",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Purpose",
+      effects: {
+        idealism: 2,
+        ambition: 1
+      }
+    },
+    {
+      text: "Discovery",
+      effects: {
+        curiosity: 2,
+        creativity: 1
+      }
+    },
+    {
+      text: "Survival",
+      effects: {
+        resilience: 2,
+        control: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 10*/
+{
+  q: "When someone depends on you emotionally, you feel…",
+  options: [
+    {
+      text: "Protective",
+      effects: {
+        protectiveness: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Overwhelmed",
+      effects: {
+        isolation: 1,
+        emotionalSuppression: 1
+      }
+    },
+    {
+      text: "Needed",
+      effects: {
+        attachment: 2,
+        emotionality: 1
+      }
+    },
+    {
+      text: "Responsible",
+      effects: {
+        sacrifice: 2,
+        obedience: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 11*/
+{
+  q: "What kind of future do you believe in?",
+  options: [
+    {
+      text: "A freer world",
+      effects: {
+        rebellion: 2,
+        idealism: 1
+      }
+    },
+    {
+      text: "A more ordered world",
+      effects: {
+        control: 2,
+        obedience: 1
+      }
+    },
+    {
+      text: "A more compassionate world",
+      effects: {
+        empathy: 2,
+        morality: 1
+      }
+    },
+    {
+      text: "A radically transformed world",
+      effects: {
+        visionaryThinking: 2,
+        ambition: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 12*/
+{
+  q: "When people misunderstand you, you usually…",
+  options: [
+    {
+      text: "Stop explaining yourself",
+      effects: {
+        isolation: 2,
+        emotionalSuppression: 1
+      }
+    },
+    {
+      text: "Try harder to connect",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Become defensive",
+      effects: {
+        dominance: 1,
+        emotionality: 1
+      }
+    },
+    {
+      text: "Accept it quietly",
+      effects: {
+        resilience: 2,
+        sacrifice: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 13*/
+{
+  q: "What motivates you most?",
+  options: [
+    {
+      text: "Recognition",
+      effects: {
+        ambition: 2,
+        dominance: 1
+      }
+    },
+    {
+      text: "Belonging",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Truth",
+      effects: {
+        morality: 2,
+        curiosity: 1
+      }
+    },
+    {
+      text: "Change",
+      effects: {
+        rebellion: 2,
+        visionaryThinking: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 14*/
+{
+  q: "Which statement feels most true?",
+  options: [
+    {
+      text: "People need guidance",
+      effects: {
+        control: 2,
+        protectiveness: 1
+      }
+    },
+    {
+      text: "People need freedom",
+      effects: {
+        rebellion: 2,
+        individuality: 1
+      }
+    },
+    {
+      text: "People need connection",
+      effects: {
+        empathy: 2,
+        attachment: 1
+      }
+    },
+    {
+      text: "People need purpose",
+      effects: {
+        idealism: 2,
+        ambition: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 15*/
+{
+  q: "When faced with failure, you tend to…",
+  options: [
+    {
+      text: "Blame yourself",
+      effects: {
+        emotionality: 1,
+        sacrifice: 1
+      }
+    },
+    {
+      text: "Push yourself harder",
+      effects: {
+        ambition: 2,
+        resilience: 1
+      }
+    },
+    {
+      text: "Detach emotionally",
+      effects: {
+        emotionalSuppression: 2,
+        isolation: 1
+      }
+    },
+    {
+      text: "Reinvent yourself",
+      effects: {
+        adaptability: 2,
+        creativity: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 16*/
+{
+  q: "Your closest relationships are usually built on…",
+  options: [
+    {
+      text: "Trust",
+      effects: {
+        attachment: 2,
+        morality: 1
+      }
+    },
+    {
+      text: "Mutual goals",
+      effects: {
+        ambition: 1,
+        control: 1
+      }
+    },
+    {
+      text: "Emotional intensity",
+      effects: {
+        emotionality: 2,
+        attachment: 1
+      }
+    },
+    {
+      text: "Quiet understanding",
+      effects: {
+        isolation: 1,
+        empathy: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 17*/
+{
+  q: "Which role feels most natural to you?",
+  options: [
+    {
+      text: "Guardian",
+      effects: {
+        protectiveness: 2,
+        sacrifice: 1
+      }
+    },
+    {
+      text: "Rebel",
+      effects: {
+        rebellion: 2,
+        individuality: 1
+      }
+    },
+    {
+      text: "Creator",
+      effects: {
+        creativity: 2,
+        visionaryThinking: 1
+      }
+    },
+    {
+      text: "Observer",
+      effects: {
+        curiosity: 2,
+        isolation: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 18*/
+{
+  q: "What hurts you most deeply?",
+  options: [
+    {
+      text: "Betrayal",
+      effects: {
+        attachment: 2,
+        emotionality: 1
+      }
+    },
+    {
+      text: "Powerlessness",
+      effects: {
+        control: 2,
+        ambition: 1
+      }
+    },
+    {
+      text: "Isolation",
+      effects: {
+        attachment: 1,
+        isolation: 2
+      }
+    },
+    {
+      text: "Meaninglessness",
+      effects: {
+        existentialism: 2,
+        identitySeeking: 1
+      }
+    }
+  ]
+},
+
+/*QUESTION 19*/
+{
+  q: "What do you hide most from others?",
+  options: [
+    {
+      text: "Your emotions",
+      effects: {
+        emotionalSuppression: 2,
+        isolation: 1
+      }
+    },
+    {
+      text: "Your fears",
+      effects: {
+        resilience: 1,
+        control: 1
+      }
+    },
+    {
+      text: "Your ambitions",
+      effects: {
+        ambition: 2,
+        dominance: 1
+      }
+    },
+    {
+      text: "Your loneliness",
+      effects: {
+        attachment: 1,
+        isolation: 2
+      }
+    }
+
+  ]
+},
+
+/*QUESTION 20*/
+{
+  q: "At your core, what are you searching for?",
+  options: [
+    {
+      text: "Identity",
+      effects: {
+        identitySeeking: 2,
+        existentialism: 1
+      }
+    },
+    {
+      text: "Connection",
+      effects: {
+        attachment: 2,
+        empathy: 1
+      }
+    },
+    {
+      text: "Purpose",
+      effects: {
+        idealism: 2,
+        ambition: 1
+      }
+    },
+    {
+      text: "Freedom",
+      effects: {
+        rebellion: 2,
+        individuality: 1
+      }
+    }
+  ]
+}
+];
 
 let current=0
 
@@ -494,32 +1383,56 @@ document.getElementById("question").innerText=q.q
 const options=document.getElementById("options")
 options.innerHTML=""
 
-q.o.forEach((opt,i)=>{
+q.options.forEach((opt)=>{
 const btn=document.createElement("button")
-btn.innerText=opt
-btn.onclick=()=>answer(q.map[i])
+btn.innerText=opt.text
+btn.onclick=()=>answer(opt.effects)
 options.appendChild(btn)
-})
+});
 }
 
-function answer(index){
-scores[archetypes[index]]+=2
-current++
-
-if(current<questions.length){
-showQuestion()
-}else{
-showResult()
+function applyEffects(effects){
+    for(const trait in effects){
+        if(userTraits.hasOwnProperty(trait)){
+            userTraits[trait] += effects[trait];
+        }
+    }
 }
+
+function answer(effects){
+    applyEffects(effects);  
+    current++;
+    if(current < questions.length){
+        showQuestion();
+    }
+    else{
+        showResult();
+    }
+}
+
+function calculateArchetypeScores(){
+  const archetypeScores = {};
+  for(const archetype in archetypeProfiles){
+    let score = 0;
+    const profile = archetypeProfiles[archetype];
+    for(const trait in profile){
+      const userValue = Math.min(10, userTraits[trait] || 0);
+      const archetypeValue = profile[trait];
+      /* similarity formula */
+      score += Math.max(0, 10 - Math.abs(archetypeValue - userValue));
+    }
+    archetypeScores[archetype] = score;
+  }
+  return archetypeScores;
 }
 
 function determineFaction(archetype){
-for(const faction in paths){
-if(paths[faction].includes(archetype)){
-return faction
-}
-}
-return "Independent"
+    for(const faction in factions){
+        if(factions[faction].includes(archetype)){
+            return faction;
+        }
+    }
+    return "Independent";
 }
 
 function showResult(){
@@ -530,33 +1443,51 @@ document.getElementById("options").style.display="none"
 const result=document.getElementById("result-screen")
 result.style.display="block"
 
-const sorted=[...archetypes].sort((a,b)=>scores[b]-scores[a])
-const top=sorted[0]
+const archetypeScores = calculateArchetypeScores();
+const sorted = Object.entries(archetypeScores)
+    .sort((a,b)=>b[1]-a[1]);
+const top = sorted[0][0];
+const second = sorted[1][0];
+const topScore = sorted[0][1];
+const secondScore = sorted[1][1];
 
-const data=archetypeResults[top] || {
-title:top,
-traits:"Unknown",
-strengths:"Unknown",
-shadow:"Unknown",
-parallel:"Unknown",
-theme:"Unknown"
-}
+ const data = archetypeResults[top] || {
+    title: top,
+    traits: "Unknown",
+    strengths: "Unknown",
+    shadow: "Unknown",
+    parallel: "Unknown",
+    theme: "Unknown"
+  };
 
 const faction=determineFaction(top)
 
-const confidenceScore=scores[sorted[0]]-scores[sorted[1]]
+const confidenceScore = topScore - secondScore;
 
 let confidence="Low"
 let meter=40
 
-if(confidenceScore>=6){
-confidence="High"
-meter=95
+if(confidenceScore >= 15){
+confidence = "High";
+meter = 95;
 }
-else if(confidenceScore>=3){
-confidence="Medium"
-meter=70
+else if(confidenceScore >= 7){
+confidence = "Medium";
+meter = 70;
 }
+
+const confidenceText =
+
+confidence === "High"
+? "Identity lock achieved. Personality pattern stable."
+: confidence === "Medium"
+? "Primary archetype detected with secondary influence."
+: "Hybrid personality detected across multiple archetypes.";
+
+  /* hybrid influence */
+
+const secondaryData = archetypeResults[second]||{
+    title:"Unknown"};
 
 result.innerHTML=`
 
@@ -571,7 +1502,7 @@ ${faction}
 </div>
 
 <div class="result-subtitle">
-Archetype Identity
+Primary Archetype
 </div>
 
 <div class="result-title">
@@ -603,16 +1534,47 @@ ${data.title}
 <span class="data-value">${data.theme}</span>
 </div>
 
-<div class="confidence-meter">
-
-<span class="data-label">
-Identity Stability: ${confidence}
-</span>
-
-<div class="meter-bar">
-<div class="meter-fill" style="width:${meter}%"></div>
+<div class="data-row">
+    <span class="data-label">Secondary Influence</span><br>
+    <span class="data-value">
+    ${secondaryData.title}
+    </span>
 </div>
 
+
+<div class="data-row">
+    <span class="data-label">Dominant Trait Signals</span><br>
+    <span class="data-value">
+        ${
+        Object.entries(userTraits)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,5)
+        .map(t=>t[0])
+        .join(" • ")
+        }
+    </span>
+</div>
+
+<div class="confidence-meter">
+    <span class="data-label">
+        Identity Stability: ${confidence}
+    </span>
+    <div class="meter-bar">
+        <div class="meter-fill" style="width:${meter}%">
+        </div>
+    </div>
+    <div class="confidence">
+        ${confidenceText}
+    </div>
+</div>
+
+<div class="prophecy">
+
+   "${confidence === "High"
+   ? "Your psychological pattern forms a stable archetypal identity."
+   : confidence === "Medium"
+   ? "Your identity balances between multiple narrative selves."
+   : "Your psyche resists singular categorization."}"
 </div>
 
 <button class="restart-btn" onclick="location.reload()">
@@ -620,7 +1582,6 @@ Restart Analysis
 </button>
 
 </div>
-
 `
 }
 </script>
