@@ -197,6 +197,33 @@ color:#aaa;
 line-height:1.6;
 }
 
+.trait-bar{
+margin-top:8px;
+}
+
+.trait-name{
+font-size:0.85rem;
+margin-bottom:4px;
+color:#00ffff;
+}
+
+.trait-meter{
+height:10px;
+background:#111;
+border:1px solid #ff4fd8;
+border-radius:8px;
+overflow:hidden;
+}
+
+.trait-fill{
+height:100%;
+background:linear-gradient(
+90deg,
+#00ffff,
+#ff00c8
+);
+}
+
 </style>
 </head>
 
@@ -1410,20 +1437,48 @@ function answer(effects){
     }
 }
 
-function calculateArchetypeScores(){
-  const archetypeScores = {};
-  for(const archetype in archetypeProfiles){
-    let score = 0;
-    const profile = archetypeProfiles[archetype];
-    for(const trait in profile){
-      const userValue = Math.min(10, userTraits[trait] || 0);
-      const archetypeValue = profile[trait];
-      /* similarity formula */
-      score += Math.max(0, 10 - Math.abs(archetypeValue - userValue));
+function normalizeTraits(){
+    const normalized = {};
+    const maxPossible = 12;
+    for(const trait in userTraits){
+        normalized[trait] = Math.min(10, (userTraits[trait] / maxPossible) * 10);
     }
-    archetypeScores[archetype] = score;
-  }
-  return archetypeScores;
+    return normalized;
+}
+
+function cosineSimilarity(user, archetype){
+    let dotProduct = 0;
+    let userMagnitude = 0;
+    let archetypeMagnitude = 0;
+    const allTraits = new Set([
+        ...Object.keys(user),
+        ...Object.keys(archetype)]);
+    allTraits.forEach(trait => {
+        const u = user[trait] || 0;
+        const a = archetype[trait] || 0;
+        dotProduct += u * a;
+        userMagnitude += u * u;
+        archetypeMagnitude += a * a;
+    });
+    userMagnitude = Math.sqrt(userMagnitude);
+    archetypeMagnitude = Math.sqrt(archetypeMagnitude);
+    if(userMagnitude === 0 || archetypeMagnitude === 0){
+        return 0;
+    }
+    return dotProduct / (userMagnitude * archetypeMagnitude);
+}
+
+function calculateArchetypeScores(){
+    const normalizedUser = normalizeTraits();
+    const scores = {};
+    for(const archetype in archetypeProfiles){
+        const similarity = cosineSimilarity(
+            normalizedUser,
+            archetypeProfiles[archetype]
+        );
+        scores[archetype] = similarity * 100;
+    }
+    return scores;
 }
 
 function determineFaction(archetype){
@@ -1435,14 +1490,77 @@ function determineFaction(archetype){
     return "Independent";
 }
 
-function showResult(){
+function generateDynamicSummary(){
+    const topTraits = Object.entries(userTraits)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,5)
+    .map(t=>t[0]);
+    let summary = "";
+    if(topTraits.includes("empathy")){
+        summary += "You possess strong emotional awareness and interpersonal sensitivity. ";
+    }
+    if(topTraits.includes("rebellion")){
+        summary += "You resist restrictive systems and value personal freedom. ";
+    }
+    if(topTraits.includes("identitySeeking")){
+        summary += "Your personality is heavily driven by existential self-discovery. ";
+    }
+    if(topTraits.includes("control")){
+        summary += "You seek structure, predictability, and influence over uncertainty. ";
+    }
+    if(topTraits.includes("creativity")){
+        summary += "Imagination and abstract thinking strongly shape your worldview. ";
+    }
+    if(topTraits.includes("attachment")){
+        summary += "Relationships and emotional bonds deeply affect your decisions. ";
+    }
+    if(topTraits.includes("emotionalSuppression")){
+        summary += "You tend to internalize emotions instead of openly expressing them. ";
+    }
+    if(topTraits.includes("visionaryThinking")){
+        summary += "You are motivated by transformative ideas and long-term possibilities. ";
+    }
+    return summary;
+}
 
+function calculateFactionPercentages(archetypeScores){
+    const factionScores = {};
+    for(const faction in factions){
+        factionScores[faction] = 0;
+    }
+    for(const archetype in archetypeScores){
+        const score = archetypeScores[archetype];
+        for(const faction in factions){
+            if(factions[faction].includes(archetype)){
+                factionScores[faction] += score;
+            }
+        }
+    }
+    const total =
+        Object.values(factionScores)
+        .reduce((a,b)=>a+b,0);
+    for(const faction in factionScores){
+        factionScores[faction] =
+        Math.round(
+            (factionScores[faction]/total)*100
+        );
+    }
+    return factionScores;
+}
+
+function detectHybrid(topScore, secondScore){
+    const difference = topScore - secondScore;
+    if(difference <= 5){
+        return true;
+    }
+    return false;
+}
+
+function showResult(){
 document.getElementById("question").style.display="none"
 document.getElementById("options").style.display="none"
-
 const result=document.getElementById("result-screen")
 result.style.display="block"
-
 const archetypeScores = calculateArchetypeScores();
 const sorted = Object.entries(archetypeScores)
     .sort((a,b)=>b[1]-a[1]);
@@ -1450,8 +1568,7 @@ const top = sorted[0][0];
 const second = sorted[1][0];
 const topScore = sorted[0][1];
 const secondScore = sorted[1][1];
-
- const data = archetypeResults[top] || {
+const data = archetypeResults[top] || {
     title: top,
     traits: "Unknown",
     strengths: "Unknown",
@@ -1459,14 +1576,13 @@ const secondScore = sorted[1][1];
     parallel: "Unknown",
     theme: "Unknown"
   };
-
 const faction=determineFaction(top)
-
+const factionPercentages = calculateFactionPercentages(archetypeScores);
+const dynamicSummary = generateDynamicSummary();
+const hybrid = detectHybrid(topScore, secondScore);
 const confidenceScore = topScore - secondScore;
-
 let confidence="Low"
 let meter=40
-
 if(confidenceScore >= 15){
 confidence = "High";
 meter = 95;
@@ -1475,9 +1591,7 @@ else if(confidenceScore >= 7){
 confidence = "Medium";
 meter = 70;
 }
-
 const confidenceText =
-
 confidence === "High"
 ? "Identity lock achieved. Personality pattern stable."
 : confidence === "Medium"
@@ -1485,7 +1599,6 @@ confidence === "High"
 : "Hybrid personality detected across multiple archetypes.";
 
   /* hybrid influence */
-
 const secondaryData = archetypeResults[second]||{
     title:"Unknown"};
 
@@ -1499,6 +1612,16 @@ Faction Alignment
 
 <div class="result-title">
 ${faction}
+</div>
+
+<div class="data-row">
+<span class="data-label">Faction Distribution</span><br>
+
+<span class="data-value">
+Seekers: ${factionPercentages["Seekers"] || 0}%<br>
+Makers & Masters: ${factionPercentages["Makers & Masters"] || 0}%<br>
+Rebels: ${factionPercentages["Rebels"] || 0}%
+</span>
 </div>
 
 <div class="result-subtitle">
@@ -1541,6 +1664,23 @@ ${data.title}
     </span>
 </div>
 
+${
+hybrid
+?
+`
+<div class="data-row">
+<span class="data-label">Hybrid Archetype Status</span><br>
+<span class="data-value">
+Your personality structure strongly blends
+${data.title}
+and
+${secondaryData.title}.
+</span>
+</div>
+`
+:
+""
+}
 
 <div class="data-row">
     <span class="data-label">Dominant Trait Signals</span><br>
@@ -1553,6 +1693,16 @@ ${data.title}
         .join(" • ")
         }
     </span>
+</div>
+
+<div class="data-row">
+<span class="data-label">
+Psychological Analysis
+</span><br>
+
+<span class="data-value">
+${dynamicSummary}
+</span>
 </div>
 
 <div class="confidence-meter">
@@ -1575,6 +1725,37 @@ ${data.title}
    : confidence === "Medium"
    ? "Your identity balances between multiple narrative selves."
    : "Your psyche resists singular categorization."}"
+</div>
+
+<div class="data-row">
+
+<span class="data-label">
+Dominant Psychological Traits
+</span>
+
+${
+Object.entries(userTraits)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5)
+.map(([trait,value])=>`
+
+<div class="trait-bar">
+
+<div class="trait-name">
+${trait}
+</div>
+
+<div class="trait-meter">
+<div class="trait-fill"
+style="width:${Math.min(value*10,100)}%">
+</div>
+</div>
+
+</div>
+
+`).join("")
+}
+
 </div>
 
 <button class="restart-btn" onclick="location.reload()">
